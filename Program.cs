@@ -20,6 +20,8 @@ builder.Services.AddScoped<IServiceDisenioProducto, ServiceDisenioProducto>();
 builder.Services.AddScoped<IServiceMedidaProducto, ServiceMedidaProducto>();
 builder.Services.AddScoped<IServicePrecioProducto, ServicePrecioProducto>();
 builder.Services.AddScoped<IServiceTipoProducto, ServiceTipoProducto>();
+builder.Services.AddScoped<IServiceProveedor, ServiceProveedor>();
+builder.Services.AddScoped<IServicePrecioMatPrimaProv, ServicePrecioMatPrimaProv>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
