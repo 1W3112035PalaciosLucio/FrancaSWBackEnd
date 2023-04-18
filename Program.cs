@@ -22,6 +22,8 @@ builder.Services.AddScoped<IServicePrecioProducto, ServicePrecioProducto>();
 builder.Services.AddScoped<IServiceTipoProducto, ServiceTipoProducto>();
 builder.Services.AddScoped<IServiceProveedor, ServiceProveedor>();
 builder.Services.AddScoped<IServicePrecioMatPrimaProv, ServicePrecioMatPrimaProv>();
+builder.Services.AddScoped<IServiceProvinciaLocalidad, ServiceProvinciaLocalidad>();
+builder.Services.AddScoped<IServiceConsultaPrMpProv, ServiceConsultaPrMpProv>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
@@ -72,13 +74,22 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseCors(c =>
 {
     c.AllowAnyHeader();
     c.AllowAnyMethod();
     c.AllowAnyOrigin();
 });
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller}/{action=Index}/{id?}");
+});
+
+
 
 app.UseHttpsRedirection();
 

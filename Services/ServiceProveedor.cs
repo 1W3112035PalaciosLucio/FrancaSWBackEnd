@@ -111,6 +111,52 @@ namespace FrancaSW.Services
                 throw;
             }
         }
+
+        public async Task<DtoProveedorId> GetProveedorByIdd(int id)
+        {
+            try
+            {
+
+                Proveedore proveedor = await context.Proveedores.Include(p => p.IdLocalidadNavigation.IdProvinciaNavigation).Where(c => c.IdProveedor.Equals(id)).FirstOrDefaultAsync();
+
+                if (proveedor == null)
+                {
+                    // Manejo del caso en que el proveedor no se encuentre
+                    return null;
+                }
+
+                DtoProveedorId dto = new DtoProveedorId();
+                dto.IdProveedor = proveedor.IdProveedor;
+                dto.Nombre = proveedor.Nombre;
+                dto.Apellido = proveedor.Apellido;
+                dto.Telefono = proveedor.Telefono;
+                dto.IdLocalidad = proveedor.IdLocalidad;
+                dto.IdProvincia = proveedor.IdLocalidadNavigation.IdProvinciaNavigation.IdProvincia;
+
+                return dto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+        public async Task<List<DtoListadoProveedor>> GetListadoProveedor()
+        {
+            return await context.Proveedores.AsNoTracking().
+                Select(x => new DtoListadoProveedor
+                {
+                    IdProveedor = x.IdProveedor,
+                    Nombre = x.Nombre,
+                    Apellido = x.Apellido,
+                    Telefono = x.Telefono,
+                    Localidad = x.IdLocalidadNavigation.Descripcion,
+                    Provincia = x.IdLocalidadNavigation.IdProvinciaNavigation.Descripcion
+
+                }).ToListAsync();
+        }
+
     }
 
 }

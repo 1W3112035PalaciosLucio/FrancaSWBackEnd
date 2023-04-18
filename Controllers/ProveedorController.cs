@@ -33,6 +33,12 @@ namespace FrancaSW.Controllers
             return Ok(await serviceProveedor.GetProveedorById(id));
         }
 
+        [HttpGet("GetProveedorByIdd/{id}")]
+        public async Task<ActionResult<ResultBase>> GetProveedorByIdd(int id)
+        {
+            return Ok(await serviceProveedor.GetProveedorByIdd(id));
+        }
+
         [HttpPost("PostProveedor")]
         public async Task<ActionResult<ResultBase>> PostProveedor([FromBody] CommandProveedor comando)
         {
@@ -55,6 +61,12 @@ namespace FrancaSW.Controllers
             }
 
             return Ok(await this.serviceProveedor.PutProveedor(dto));
+        }
+
+        [HttpGet("GetListadoProveedores")]
+        public async Task<ActionResult> GetListadoProveedor()
+        {
+            return Ok(await this.serviceProveedor.GetListadoProveedor());
         }
     }
 }

@@ -10,5 +10,7 @@ namespace FrancaSW.Services
         Task<ResultBase> PostProveedor(Proveedore proveedor);
         Task<ResultBase> PutProveedor(DtoProveedor dtoProveedor);
         Task<DtoProveedor> GetProveedorById(int id);
+        Task<DtoProveedorId> GetProveedorByIdd(int id);
+        Task<List<DtoListadoProveedor>> GetListadoProveedor();
     }
 }

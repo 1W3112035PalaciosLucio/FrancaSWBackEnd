@@ -10,5 +10,6 @@ namespace FrancaSW.Services
         Task<List<DtoListaPrMatPrProv>> GetListaPrecioMatPrimaProv();
         Task<ResultBase> PutPrecioMatPrimaProv(DtoPrecioMatPrimaProv dtoPrecio);
         Task<DtoListaPrMatPrProv> GetPrecioMatPrimaProvById(int id);
+       
     }
 }

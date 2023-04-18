@@ -16,10 +16,14 @@ namespace FrancaSW.Controllers
         private readonly IServicePrecioMatPrimaProv servicePrecioMatPrimaProv;
         private readonly ISecurityService securityService;
 
-        public PrecioMatPrimaProvController(IServicePrecioMatPrimaProv _servicePrecioMatPrimaProv, ISecurityService _securityService, FrancaSwContext context)
+        private readonly IServiceConsultaPrMpProv serviceConsultaPrMpProv;
+
+        public PrecioMatPrimaProvController(IServicePrecioMatPrimaProv _servicePrecioMatPrimaProv, 
+            ISecurityService _securityService, FrancaSwContext context, IServiceConsultaPrMpProv _serviceConsultaPrMpProv)
         {
             this.servicePrecioMatPrimaProv = _servicePrecioMatPrimaProv;
             this.securityService = _securityService;
+            this.serviceConsultaPrMpProv = _serviceConsultaPrMpProv;
         }
 
         [HttpPost("PostMatPrimaProv")]
@@ -40,6 +44,7 @@ namespace FrancaSW.Controllers
         {
             return Ok(await this.servicePrecioMatPrimaProv.GetListaPrecioMatPrimaProv());
         }
+        
         [HttpPut("PutPreciosMateriasPrimasProveedores")]
         public async Task<ActionResult<ResultBase>> PutPrecioMatPrimaProv([FromBody] DtoPrecioMatPrimaProv dtoPrecio)
         {
@@ -55,6 +60,32 @@ namespace FrancaSW.Controllers
         public async Task<ActionResult<ResultBase>> GetPrecioMatPrimaProvById(int id)
         {
             return Ok(await this.servicePrecioMatPrimaProv.GetPrecioMatPrimaProvById(id));
+        }
+
+        [HttpGet("GetConsultaMpByProveedor/{idProveedor}")]
+        public async Task<ActionResult<List<DtoConsultaPrMPbyProveedor>>> GetConsultaMpByProveedor(int idProveedor)
+        {
+            var precios = await serviceConsultaPrMpProv.ObtenerPreciosPorProveedor(idProveedor);
+
+            if (precios == null || precios.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(precios);
+        }
+
+        [HttpGet("GetConsultaMpByMateriaPrima/{idMateriaPrima}")]
+        public async Task<ActionResult<List<DtoConsultaPrMPbyProveedor>>> GetConsultaMpByMateriaPrima(int idMateriaPrima)
+        {
+            var precios = await serviceConsultaPrMpProv.ObtenerPreciosPorMateriaPrima(idMateriaPrima);
+
+            if (precios == null || precios.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(precios);
         }
 
     }
