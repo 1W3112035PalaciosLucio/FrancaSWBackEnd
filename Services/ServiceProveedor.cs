@@ -152,11 +152,57 @@ namespace FrancaSW.Services
                     Apellido = x.Apellido,
                     Telefono = x.Telefono,
                     Localidad = x.IdLocalidadNavigation.Descripcion,
-                    Provincia = x.IdLocalidadNavigation.IdProvinciaNavigation.Descripcion
+                    Provincia = x.IdLocalidadNavigation.IdProvinciaNavigation.Descripcion,
+                    Activo = x.Activo
 
                 }).ToListAsync();
         }
 
+        public async Task<ResultBase> DesactivarProveedor(int id)
+        {
+            ResultBase resultado = new ResultBase();
+            var proveedor = await context.Proveedores.Where(c => c.IdProveedor.Equals(id)).FirstOrDefaultAsync();
+            if (proveedor != null)
+            {
+                resultado.Ok = true;
+                resultado.CodigoEstado = 200;
+                resultado.Message = "El proveedor fue desactivado exitosamente!";
+                proveedor.Activo = false;
+                context.Update(proveedor);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                resultado.Ok = false;
+                resultado.CodigoEstado = 400;
+                resultado.Message = "Error al desactivar el proveedor";
+                return resultado;
+            }
+            return resultado;
+        }
+
+        public async Task<ResultBase> ActivarProveedor(int id)
+        {
+            ResultBase resultado = new ResultBase();
+            var proveedor = await context.Proveedores.Where(c => c.IdProveedor.Equals(id)).FirstOrDefaultAsync();
+            if (proveedor != null)
+            {
+                resultado.Ok = true;
+                resultado.CodigoEstado = 200;
+                resultado.Message = "El proveedor se activó exitosamente!";
+                proveedor.Activo = true;
+                context.Update(proveedor);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                resultado.Ok = false;
+                resultado.CodigoEstado = 400;
+                resultado.Message = "Error al activar el proveedor";
+                return resultado;
+            }
+            return resultado;
+        }
     }
 
 }

@@ -15,6 +15,8 @@ public partial class Proveedore
 
     public int IdLocalidad { get; set; }
 
+    public bool? Activo { get; set; }
+
     public virtual Localidade IdLocalidadNavigation { get; set; } = null!;
 
     public virtual ICollection<PreciosMateriasPrimasProveedore> PreciosMateriasPrimasProveedores { get; } = new List<PreciosMateriasPrimasProveedore>();

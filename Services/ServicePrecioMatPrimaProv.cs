@@ -195,5 +195,88 @@ namespace FrancaSW.Services
                 throw;
             }
         }
+
+        public async Task<DtoListaPrecioMatPrProv> GetPrecioMatPrimaProvByIdd(int id)
+        {
+            try
+            {
+                PreciosMateriasPrimasProveedore var = await context.PreciosMateriasPrimasProveedores
+                 .Include(p => p.IdProveedorNavigation)
+                     .ThenInclude(p => p.IdLocalidadNavigation)
+                         .ThenInclude(l => l.IdProvinciaNavigation)
+                 .Include(p => p.IdMateriaPrimaNavigation)
+                 .Where(p => p.IdPreciosMateriaPrimaProveedor == id)
+                 .FirstOrDefaultAsync();
+
+                if (var == null)
+                    return null;
+
+                DtoListaPrecioMatPrProv dto = new DtoListaPrecioMatPrProv();
+                dto.IdPreciosMateriaPrimaProveedor = var.IdPreciosMateriaPrimaProveedor;
+                dto.IdProveedor = var.IdProveedor;
+                dto.Nombre = var.IdProveedorNavigation.Nombre;
+                dto.IdMateriaPrima = var.IdMateriaPrima;
+                dto.NombreMateriaPrima = var.IdMateriaPrimaNavigation.Descripcion;
+                dto.FechaVigenciaDesde = var.FechaVigenciaDesde;
+                dto.FechaVigenciaHasta = var.FechaVigenciaHasta;
+                dto.Precio = var.Precio;
+                dto.Apellido = var.IdProveedorNavigation.Apellido;
+                dto.Telefono = var.IdProveedorNavigation.Telefono;
+                dto.Activo = var.IdProveedorNavigation.Activo;
+                dto.Localidad = var.IdProveedorNavigation.IdLocalidadNavigation.Descripcion;
+                dto.Provincia = var.IdProveedorNavigation.IdLocalidadNavigation.IdProvinciaNavigation.Descripcion;
+
+                return dto;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<DtoListaPrecioMatPrProv>> GetAllPrecioMatPrimaProv()
+        {
+            try
+            {
+                List<PreciosMateriasPrimasProveedore> precios = await context.PreciosMateriasPrimasProveedores
+                .Include(p => p.IdProveedorNavigation)
+                .ThenInclude(p => p.IdLocalidadNavigation)
+                .ThenInclude(l => l.IdProvinciaNavigation)
+                .Include(p => p.IdMateriaPrimaNavigation)
+                .ToListAsync();
+
+                if (precios == null || precios.Count == 0)
+                    return null;
+
+                List<DtoListaPrecioMatPrProv> dtos = new List<DtoListaPrecioMatPrProv>();
+                foreach (PreciosMateriasPrimasProveedore var in precios)
+                {
+                    DtoListaPrecioMatPrProv dto = new DtoListaPrecioMatPrProv();
+                    dto.IdPreciosMateriaPrimaProveedor = var.IdPreciosMateriaPrimaProveedor;
+                    dto.IdProveedor = var.IdProveedor;
+                    dto.Nombre = var.IdProveedorNavigation.Nombre;
+                    dto.IdMateriaPrima = var.IdMateriaPrima;
+                    dto.NombreMateriaPrima = var.IdMateriaPrimaNavigation.Descripcion;
+                    dto.FechaVigenciaDesde = var.FechaVigenciaDesde;
+                    dto.FechaVigenciaHasta = var.FechaVigenciaHasta;
+                    dto.Precio = var.Precio;
+                    dto.Apellido = var.IdProveedorNavigation.Apellido;
+                    dto.Telefono = var.IdProveedorNavigation.Telefono;
+                    dto.Activo = var.IdProveedorNavigation.Activo;
+                    dto.Localidad = var.IdProveedorNavigation.IdLocalidadNavigation.Descripcion;
+                    dto.Provincia = var.IdProveedorNavigation.IdLocalidadNavigation.IdProvinciaNavigation.Descripcion;
+                    dtos.Add(dto);
+                }
+
+                return dtos;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
     }
 }

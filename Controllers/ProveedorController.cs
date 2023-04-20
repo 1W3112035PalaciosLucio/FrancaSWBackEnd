@@ -68,5 +68,17 @@ namespace FrancaSW.Controllers
         {
             return Ok(await this.serviceProveedor.GetListadoProveedor());
         }
+
+        [HttpDelete("DesactivarProveedor/{id}")]
+        public async Task<ActionResult<ResultBase>> DesactivarProveedor(int id)
+        {
+            return Ok(await this.serviceProveedor.DesactivarProveedor(id));
+        }
+
+        [HttpPut("ActivarProveedor/{id}")]
+        public async Task<ActionResult<ResultBase>> ActivarProveedor(int id)
+        {
+            return Ok(await this.serviceProveedor.ActivarProveedor(id));
+        }
     }
 }

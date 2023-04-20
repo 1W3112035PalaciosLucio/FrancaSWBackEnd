@@ -24,6 +24,7 @@ builder.Services.AddScoped<IServiceProveedor, ServiceProveedor>();
 builder.Services.AddScoped<IServicePrecioMatPrimaProv, ServicePrecioMatPrimaProv>();
 builder.Services.AddScoped<IServiceProvinciaLocalidad, ServiceProvinciaLocalidad>();
 builder.Services.AddScoped<IServiceConsultaPrMpProv, ServiceConsultaPrMpProv>();
+builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>

@@ -62,18 +62,38 @@ namespace FrancaSW.Controllers
             return Ok(await this.servicePrecioMatPrimaProv.GetPrecioMatPrimaProvById(id));
         }
 
+        [HttpGet("GetListaPrecioMatPrimaProvById/{id}")]
+        public async Task<ActionResult<ResultBase>> GetPrecioMatPrimaProvByIdd(int id)
+        {
+            return Ok(await this.servicePrecioMatPrimaProv.GetPrecioMatPrimaProvByIdd(id));
+        }
+
         [HttpGet("GetConsultaMpByProveedor/{idProveedor}")]
         public async Task<ActionResult<List<DtoConsultaPrMPbyProveedor>>> GetConsultaMpByProveedor(int idProveedor)
         {
+            // Validar el valor del parámetro idProveedor
+            if (idProveedor <= 0)
+            {
+                return BadRequest("El valor del parámetro proveedor es inválido.");
+            }
+
             var precios = await serviceConsultaPrMpProv.ObtenerPreciosPorProveedor(idProveedor);
 
+            // Validar el resultado de la consulta
             if (precios == null || precios.Count == 0)
             {
-                return NotFound();
+                return BadRequest("No se encontraron resultados para el proveedor proporcionado.");
+            }
+
+            // Verificar si hay resultados inválidos
+            if (precios.Any(p => p.idProveedor == null || p.idMateriaPrima == null))
+            {
+                return BadRequest("La lista de precios devuelta contiene valores nulos en los campos importantes.");
             }
 
             return Ok(precios);
         }
+
 
         [HttpGet("GetConsultaMpByMateriaPrima/{idMateriaPrima}")]
         public async Task<ActionResult<List<DtoConsultaPrMPbyProveedor>>> GetConsultaMpByMateriaPrima(int idMateriaPrima)
@@ -88,5 +108,15 @@ namespace FrancaSW.Controllers
             return Ok(precios);
         }
 
+        [HttpGet("GetListadoPreciosMatPrimaCompleto")]
+        public async Task<ActionResult<List<DtoListaPrecioMatPrProv>>> GetAllPrecioMatPrimaProv()
+        {
+            List<DtoListaPrecioMatPrProv> result = await servicePrecioMatPrimaProv.GetAllPrecioMatPrimaProv();
+
+            if (result == null)
+                return NoContent();
+
+            return Ok(result);
+        }
     }
 }

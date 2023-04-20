@@ -12,5 +12,7 @@ namespace FrancaSW.Services
         Task<DtoProveedor> GetProveedorById(int id);
         Task<DtoProveedorId> GetProveedorByIdd(int id);
         Task<List<DtoListadoProveedor>> GetListadoProveedor();
+        Task<ResultBase> DesactivarProveedor(int id);
+        Task<ResultBase> ActivarProveedor(int id);
     }
 }
