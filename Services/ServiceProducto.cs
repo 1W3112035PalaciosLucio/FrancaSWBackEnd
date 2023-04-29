@@ -142,6 +142,31 @@ namespace FrancaSW.Services
             }
         }
 
+
+        public async Task<DTOProducto> GetProdByCodigo(int id)
+        {
+            try
+            {
+                Producto producto = await context.Productos.Where(c => c.IdProducto.Equals(id)).FirstOrDefaultAsync();
+                DTOProducto dto = new DTOProducto();
+                dto.IdProducto = producto.IdProducto;
+                dto.Codigo = producto.Codigo;
+                dto.Nombre = producto.Nombre;
+                dto.IdTipoProducto = producto.IdTipoProducto;
+                dto.IdColorProducto = producto.IdColorProducto;
+                dto.IdMedidaProducto = producto.IdMedidaProducto;
+                dto.IdPreciosBocha = producto.IdPrecioBocha;
+                dto.IdDisenioProducto = producto.IdDisenioProducto;
+                dto.Activo = producto.Activo;
+                return dto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         //Desactivar producto
         public async Task<ResultBase> DesactivarProducto(int id)
         {

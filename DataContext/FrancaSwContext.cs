@@ -77,7 +77,8 @@ public partial class FrancaSwContext : DbContext
             entity.Property(e => e.IdCatalogo).HasColumnName("Id_catalogo");
             entity.Property(e => e.Descripcion).IsUnicode(false);
             entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
-            entity.Property(e => e.Imagen).HasColumnType("image");
+            entity.Property(e => e.Imagen).IsUnicode(false);
+            entity.Property(e => e.ImagenPublicId).IsUnicode(false);
 
             entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.Catalogos)
                 .HasForeignKey(d => d.IdProducto)

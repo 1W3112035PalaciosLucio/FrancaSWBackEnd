@@ -1,3 +1,5 @@
+using CloudinaryDotNet;
+using FrancaSW.Comun;
 using FrancaSW.DataContext;
 using FrancaSW.Services;
 using FrancaSW.Services.AgregarProducto;
@@ -25,6 +27,7 @@ builder.Services.AddScoped<IServicePrecioMatPrimaProv, ServicePrecioMatPrimaProv
 builder.Services.AddScoped<IServiceProvinciaLocalidad, ServiceProvinciaLocalidad>();
 builder.Services.AddScoped<IServiceConsultaPrMpProv, ServiceConsultaPrMpProv>();
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
+builder.Services.AddScoped<IServiceCatalogo, ServiceCatalogo>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
@@ -55,7 +58,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
 builder.Services.AddCors();
 builder.Services.AddEntityFrameworkSqlServer().AddDbContext<FrancaSwContext>(options => options.UseSqlServer("Data Source=DESKTOP-HFJMQO3\\SQLEXPRESS;Initial Catalog=FrancaSW; Trusted_Connection=true; Encrypt=False"));
-
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 
 var app = builder.Build();

@@ -11,7 +11,9 @@ public partial class Catalogo
 
     public string Descripcion { get; set; } = null!;
 
-    public byte[] Imagen { get; set; } = null!;
+    public string Imagen { get; set; } = null!;
+
+    public string ImagenPublicId { get; set; } = null!;
 
     public virtual Producto IdProductoNavigation { get; set; } = null!;
 }

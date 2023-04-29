@@ -13,5 +13,7 @@ namespace FrancaSW.Services
         Task<List<DtoListadoProductos>> GetListadoProductos();
         Task<ResultBase> DesactivarProducto(int id);
         Task<ResultBase> ActivarProducto(int id);
+
+        Task<DTOProducto> GetProdByCodigo(int codigo);
     }
 }

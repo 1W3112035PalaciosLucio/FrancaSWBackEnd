@@ -34,6 +34,12 @@ namespace FrancaSW.Controllers
             return Ok(await this.serviceProducto.GetProductoById(id));
         }
 
+        [HttpGet("GetProdByCodigo/{id}")]
+        public async Task<ActionResult<ResultBase>> GetProdByCodigo(int id)
+        {
+            return Ok(await this.serviceProducto.GetProdByCodigo(id));
+        }
+
         [HttpPost("PostProducto")]
         public async Task<ActionResult<ResultBase>> PostProducto([FromBody] CommandProducto comando)
         {

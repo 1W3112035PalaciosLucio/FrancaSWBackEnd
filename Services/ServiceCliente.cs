@@ -93,7 +93,7 @@ namespace FrancaSW.Services
             }
             return resultado;
         }
-        //Listado de materias primas por id
+        //Listado de clientes por id
         public async Task<DtoClienteId> GetClienteById(int id)
         {
             try
