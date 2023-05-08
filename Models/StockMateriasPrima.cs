@@ -21,5 +21,7 @@ public partial class StockMateriasPrima
 
     public decimal? StockInicial { get; set; }
 
+    public virtual ICollection<HistorialXStockMp> HistorialXStockMps { get; } = new List<HistorialXStockMp>();
+
     public virtual MateriasPrima IdMateriaPrimaNavigation { get; set; } = null!;
 }

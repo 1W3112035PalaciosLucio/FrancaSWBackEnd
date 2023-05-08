@@ -121,5 +121,11 @@ namespace FrancaSW.Controllers
         {
             return Ok(await this.serviceCatalogo.GetListadoCatalogoProdd(id));
         }
+
+        [HttpDelete("EliminarCatalogo/{id}")]
+        public async Task<ActionResult<ResultBase>> EliminarCatalogo(int id)
+        {
+            return Ok(await this.serviceCatalogo.eliminarCatalogo(id));
+        }
     }
 }

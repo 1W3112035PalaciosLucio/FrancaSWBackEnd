@@ -28,6 +28,10 @@ builder.Services.AddScoped<IServiceProvinciaLocalidad, ServiceProvinciaLocalidad
 builder.Services.AddScoped<IServiceConsultaPrMpProv, ServiceConsultaPrMpProv>();
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
 builder.Services.AddScoped<IServiceCatalogo, ServiceCatalogo>();
+builder.Services.AddScoped<IServiceStockMateriaPrima, ServiceStockMateriaPrima>();
+builder.Services.AddScoped<IServiceStockProductos, ServiceStockProductos>();
+builder.Services.AddScoped<IServiceHistorialStockMP, ServiceHistorialStockMP>();
+builder.Services.AddScoped<IServiceHistorialStockProductos, ServiceHistorialStockProductos>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>

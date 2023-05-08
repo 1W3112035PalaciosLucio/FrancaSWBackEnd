@@ -306,6 +306,27 @@ namespace FrancaSW.Services
                 throw;
             }
         }
-
+        public async Task<ResultBase>eliminarCatalogo(int id)
+        {
+            ResultBase resultado = new ResultBase();
+            var catalogo = await context.Catalogos.Where(c => c.IdCatalogo.Equals(id)).FirstOrDefaultAsync();
+            if (catalogo != null)
+            {
+                resultado.Ok = true;
+                resultado.CodigoEstado = 200;
+                resultado.Message = "El catalogo fue eliminado exitosamente!";
+                
+                context.Remove(catalogo);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                resultado.Ok = false;
+                resultado.CodigoEstado = 400;
+                resultado.Message = "Error al eliminar el catalogo";
+                return resultado;
+            }
+            return resultado;
+        }
     }
 }

@@ -30,6 +30,14 @@ public partial class FrancaSwContext : DbContext
 
     public virtual DbSet<Formula> Formulas { get; set; }
 
+    public virtual DbSet<HistorialStockMateriaPrima> HistorialStockMateriaPrimas { get; set; }
+
+    public virtual DbSet<HistorialStockProducto> HistorialStockProductos { get; set; }
+
+    public virtual DbSet<HistorialXStockMp> HistorialXStockMps { get; set; }
+
+    public virtual DbSet<HistorialXStockP> HistorialXStockPs { get; set; }
+
     public virtual DbSet<Localidade> Localidades { get; set; }
 
     public virtual DbSet<MateriasPrima> MateriasPrimas { get; set; }
@@ -180,6 +188,84 @@ public partial class FrancaSwContext : DbContext
                 .HasForeignKey(d => d.IdProducto)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Formulas_Productos");
+        });
+
+        modelBuilder.Entity<HistorialStockMateriaPrima>(entity =>
+        {
+            entity.HasKey(e => e.IdHistorial);
+
+            entity.ToTable("Historial_Stock_Materia_Prima");
+
+            entity.Property(e => e.IdHistorial).HasColumnName("Id_historial");
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.FechaUltimaActualizacion)
+                .HasColumnType("date")
+                .HasColumnName("Fecha_ultima_actualizacion");
+            entity.Property(e => e.IdMateriaPrima).HasColumnName("Id_materia_prima");
+            entity.Property(e => e.Precio).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.TipoMovimiento)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Tipo_movimiento");
+        });
+
+        modelBuilder.Entity<HistorialStockProducto>(entity =>
+        {
+            entity.HasKey(e => e.IdHistorialProd);
+
+            entity.ToTable("Historial_Stock_Productos");
+
+            entity.Property(e => e.IdHistorialProd).HasColumnName("Id_historial_prod");
+            entity.Property(e => e.FechaUltimaActualizacion)
+                .HasColumnType("date")
+                .HasColumnName("Fecha_ultima_actualizacion");
+            entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
+            entity.Property(e => e.TipoMovimiento)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Tipo_movimiento");
+        });
+
+        modelBuilder.Entity<HistorialXStockMp>(entity =>
+        {
+            entity.HasKey(e => e.IdHistorialMpStockMp);
+
+            entity.ToTable("Historial_X_StockMP");
+
+            entity.Property(e => e.IdHistorialMpStockMp).HasColumnName("Id_historialMp_StockMp");
+            entity.Property(e => e.IdHistorial).HasColumnName("Id_historial");
+            entity.Property(e => e.IdStockMateriaPrima).HasColumnName("Id_stock_materia_prima");
+
+            entity.HasOne(d => d.IdHistorialNavigation).WithMany(p => p.HistorialXStockMps)
+                .HasForeignKey(d => d.IdHistorial)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Historial_X_StockMP_Historial_Stock_Materia_Prima");
+
+            entity.HasOne(d => d.IdStockMateriaPrimaNavigation).WithMany(p => p.HistorialXStockMps)
+                .HasForeignKey(d => d.IdStockMateriaPrima)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Historial_X_StockMP_Stock_Materias_Primas");
+        });
+
+        modelBuilder.Entity<HistorialXStockP>(entity =>
+        {
+            entity.HasKey(e => e.IdHistorialPStockP);
+
+            entity.ToTable("Historial_X_StockP");
+
+            entity.Property(e => e.IdHistorialPStockP).HasColumnName("Id_historialP_StockP");
+            entity.Property(e => e.IdHistorialProd).HasColumnName("Id_historial_prod");
+            entity.Property(e => e.IdStockProducto).HasColumnName("Id_stock_producto");
+
+            entity.HasOne(d => d.IdHistorialProdNavigation).WithMany(p => p.HistorialXStockPs)
+                .HasForeignKey(d => d.IdHistorialProd)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Historial_X_StockP_Historial_Stock_Productos");
+
+            entity.HasOne(d => d.IdStockProductoNavigation).WithMany(p => p.HistorialXStockPs)
+                .HasForeignKey(d => d.IdStockProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Historial_X_StockP_Stock_Productos");
         });
 
         modelBuilder.Entity<Localidade>(entity =>
@@ -471,6 +557,9 @@ public partial class FrancaSwContext : DbContext
             entity.ToTable("Stock_Productos");
 
             entity.Property(e => e.IdStockProducto).HasColumnName("Id_stock_producto");
+            entity.Property(e => e.FechaUltimaActualizacion)
+                .HasColumnType("date")
+                .HasColumnName("Fecha_ultima_actualizacion");
             entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
 
             entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.StockProductos)

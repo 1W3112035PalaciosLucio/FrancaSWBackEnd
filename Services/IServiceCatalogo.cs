@@ -16,6 +16,7 @@ namespace FrancaSW.Services
         Task<DtoListadoCatalogoProd> GetListaCatalogoProdById(int id);
         Task<List<DtoListadoCatalogo>> GetListadoCatalogo();
         Task<DtoCatalogoProd> GetListadoCatalogoProdd(int id);
+        Task<ResultBase> eliminarCatalogo(int id);
 
 
     }
