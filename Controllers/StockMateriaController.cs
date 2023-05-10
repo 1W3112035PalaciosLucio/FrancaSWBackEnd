@@ -59,7 +59,7 @@ namespace FrancaSW.Controllers
         {
             try
             {
-                
+
                 var result = await serviceStockMP.PutStockMP(comando);
 
                 if (result.Ok)
@@ -82,68 +82,6 @@ namespace FrancaSW.Controllers
                 return BadRequest(resultado);
             }
         }
-
-        //[HttpPut("PutStockMateriaPrima/{id}")]
-        //public async Task<ActionResult<ResultBase>> PutStockMP([FromBody] CommandStockMateriaPrima comando)
-        //{
-        //    CommandStockMateriaPrima stockMpExist = new CommandStockMateriaPrima();
-
-
-        //    stockMpExist.StockMinimo = comando.StockMinimo;
-        //    stockMpExist.StockInicial = comando.StockInicial;
-        //    stockMpExist.Cantidad = comando.Cantidad;
-        //    stockMpExist.Precio = comando.Precio;
-        //    stockMpExist.FechaUltimaActualizacion = comando.FechaUltimaActualizacion;
-        //    stockMpExist.FechaUltimoPrecio = comando.FechaUltimoPrecio;
-        //    stockMpExist.TipoMovimiento = comando.TipoMovimiento;
-        //    stockMpExist.IdMateriaPrima = comando.IdMateriaPrima;
-
-
-
-        //    return Ok(await this.serviceStockMP.PutStockMP(stockMpExist));
-
-        //}
-
-        //[HttpPut("PutStockMateriaPrima/{id}")]
-        //public async Task<ActionResult<ResultBase>> PutStockMP([FromBody] CommandStockMateriaPrima comando)
-        //{
-        //    try
-        //    {
-        //        CommandStockMateriaPrima stockMpExist = new CommandStockMateriaPrima
-        //        {
-        //            IdStockMateriaPrima = comando.IdStockMateriaPrima,
-        //            StockMinimo = comando.StockMinimo,
-        //            StockInicial = comando.StockInicial,
-        //            Cantidad = comando.Cantidad,
-        //            Precio = comando.Precio,
-        //            FechaUltimaActualizacion = comando.FechaUltimaActualizacion,
-        //            FechaUltimoPrecio = comando.FechaUltimoPrecio,
-        //            TipoMovimiento = comando.TipoMovimiento,
-        //            IdMateriaPrima = comando.IdMateriaPrima
-        //        };
-
-        //        var result = await this.serviceStockMP.PutStockMP(stockMpExist);
-
-        //        if (result.Ok)
-        //        {
-        //            return Ok(result);
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(result);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        var resultado = new ResultBase
-        //        {
-        //            Ok = false,
-        //            CodigoEstado = 400,
-        //            Message = "Error al actualizar el stock"
-        //        };
-        //        return BadRequest(resultado);
-        //    }
-        //}
 
     }
 }

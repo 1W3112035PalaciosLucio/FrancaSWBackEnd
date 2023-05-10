@@ -1,4 +1,5 @@
 using CloudinaryDotNet;
+using AutoMapper;
 using FrancaSW.Comun;
 using FrancaSW.DataContext;
 using FrancaSW.Services;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
+using FrancaSW.Services.AgregarOrdenProd;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,9 @@ builder.Services.AddScoped<IServiceStockMateriaPrima, ServiceStockMateriaPrima>(
 builder.Services.AddScoped<IServiceStockProductos, ServiceStockProductos>();
 builder.Services.AddScoped<IServiceHistorialStockMP, ServiceHistorialStockMP>();
 builder.Services.AddScoped<IServiceHistorialStockProductos, ServiceHistorialStockProductos>();
+builder.Services.AddScoped<IServiceOrdenesProduccion, ServiceOrdenesProduccion>();
+builder.Services.AddScoped<IServiceFormula, ServiceFormula>();
+builder.Services.AddScoped<IServiceAgregarOrdenProd, ServiceAgregarOrdenProd>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
@@ -64,6 +70,7 @@ builder.Services.AddCors();
 builder.Services.AddEntityFrameworkSqlServer().AddDbContext<FrancaSwContext>(options => options.UseSqlServer("Data Source=DESKTOP-HFJMQO3\\SQLEXPRESS;Initial Catalog=FrancaSW; Trusted_Connection=true; Encrypt=False"));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
