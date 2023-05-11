@@ -8,6 +8,7 @@ namespace FrancaSW.Services
     {
         Task<List<DtoOrdenProdListado>> GetListadoOrdenProduccion();
         Task<ResultBase> PostOrdenProd(DtoOrdenProd orden);
-    
+        Task<ResultBase> PutEstado(DtoEstadoOrden estado);
+
     }
 }

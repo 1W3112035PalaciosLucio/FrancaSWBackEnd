@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FrancaSW.Comun;
 using FrancaSW.DataContext;
 using FrancaSW.DTO;
 using FrancaSW.Models;
@@ -133,5 +134,130 @@ namespace FrancaSW.Services
             return true; // Tiene suficiente stock de todas las materias primas
         }
 
+
+        //public async Task<ResultBase> PutEstado(DtoEstadoOrden estado)
+        //{
+        //    ResultBase resultado = new ResultBase();
+        //    var orden = await context.OrdenesProducciones.Where(c => c.NumeroOrden.Equals(estado.NumeroOrden)).FirstOrDefaultAsync();
+        //    try
+        //    {
+        //        if (orden != null)
+        //        {
+        //            orden.IdEstadoOrdenProduccion = estado.IdEstadoOrdenProduccion;
+
+        //            context.Update(orden);
+
+        //            await context.SaveChangesAsync();
+        //            resultado.Ok = true;
+        //            resultado.CodigoEstado = 200;
+        //            resultado.Message = "La orden se modifico exitosamente.";
+        //        }
+
+        //        else
+        //        {
+        //            resultado.Ok = false;
+        //            resultado.CodigoEstado = 400;
+        //            resultado.Message = "Error al modificar la orden";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        resultado.Ok = false;
+        //        resultado.CodigoEstado = 400;
+        //        resultado.Error = ex.ToString();
+        //        resultado.Message = "Error al modificar la orden";
+        //    }
+
+        //    return resultado;
+        //}
+
+
+        public async Task<ResultBase> PutEstado(DtoEstadoOrden estado)
+        {
+            ResultBase resultado = new ResultBase();
+            var orden = await context.OrdenesProducciones
+                .Include(o => o.IdProductoNavigation) // Incluye la entidad relacionada
+                .FirstOrDefaultAsync(c => c.NumeroOrden.Equals(estado.NumeroOrden));
+
+            try
+            {
+                if (orden != null)
+                {
+                    int estadoAnterior = orden.IdEstadoOrdenProduccion;
+                    orden.IdEstadoOrdenProduccion = estado.IdEstadoOrdenProduccion;
+
+                    context.Update(orden);
+                    await context.SaveChangesAsync();
+
+                    // Realizar acciones adicionales según el estado
+                    if (estadoAnterior != estado.IdEstadoOrdenProduccion)
+                    {
+                        switch (estado.IdEstadoOrdenProduccion)
+                        {
+                            case 2: // Cancelada
+                                await DevolverMateriasPrimas(orden);
+                                break;
+                            case 3: // Finalizada
+                                await AgregarProductos(orden);
+                                break;
+                        }
+                    }
+
+                    resultado.Ok = true;
+                    resultado.CodigoEstado = 200;
+                    resultado.Message = "La orden se modificó exitosamente.";
+                }
+                else
+                {
+                    resultado.Ok = false;
+                    resultado.CodigoEstado = 400;
+                    resultado.Message = "Error al modificar la orden";
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado.Ok = false;
+                resultado.CodigoEstado = 400;
+                resultado.Error = ex.ToString();
+                resultado.Message = "Error al modificar la orden";
+            }
+
+            return resultado;
+        }
+
+        private async Task DevolverMateriasPrimas(OrdenesProduccione orden)
+        {
+            var formulas = await context.Formulas
+                .Where(f => f.IdProducto == orden.IdProducto)
+                .ToListAsync();
+
+            foreach (var formula in formulas)
+            {
+                var materiaPrima = await context.StockMateriasPrimas
+                    .FirstOrDefaultAsync(mp => mp.IdMateriaPrima == formula.IdMateriaPrima);
+
+                if (materiaPrima != null)
+                {
+                    decimal cantidadDevuelta = (decimal)(formula.CantidadMateriaPrima * orden.Cantidad);
+                    materiaPrima.Cantidad += cantidadDevuelta;
+                    context.Update(materiaPrima);
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private async Task AgregarProductos(OrdenesProduccione orden)
+        {
+            var stockProducto = await context.StockProductos
+                .FirstOrDefaultAsync(sp => sp.IdProducto == orden.IdProducto);
+
+            if (stockProducto != null)
+            {
+                stockProducto.Cantidad += (int)orden.Cantidad;
+                context.Update(stockProducto);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

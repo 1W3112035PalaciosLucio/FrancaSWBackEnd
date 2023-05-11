@@ -45,8 +45,8 @@ namespace FrancaSW.Controllers
             return Ok(await this.serviceFormula.PostFormula(form));
         }
 
-        [HttpPut("PutProducto")]
-        public async Task<ActionResult<ResultBase>> PutProducto([FromBody] DtoFormula dtoFormula)
+        [HttpPut("PutFormula")]
+        public async Task<ActionResult<ResultBase>> PutFormula([FromBody] DtoFormula dtoFormula)
         {
             if (dtoFormula == null)
             {

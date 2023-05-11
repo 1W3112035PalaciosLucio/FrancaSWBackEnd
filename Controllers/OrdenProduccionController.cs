@@ -52,6 +52,16 @@ namespace FrancaSW.Controllers
             }
         }
 
+        [HttpPut("PutEstado")]
+        public async Task<ActionResult<ResultBase>> PutEstado([FromBody] DtoEstadoOrden comando)
+        {
+            DtoEstadoOrden o = new DtoEstadoOrden();
+            o.NumeroOrden = comando.NumeroOrden;
+            o.IdEstadoOrdenProduccion = comando.IdEstadoOrdenProduccion;
+
+            return Ok(await this.serviceOP.PutEstado(o));
+        }
+
 
     }
 }

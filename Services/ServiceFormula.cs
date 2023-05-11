@@ -33,12 +33,42 @@ namespace FrancaSW.Services
 
         public async Task<ResultBase> PostFormula(Formula f)
         {
+            //ResultBase resultado = new ResultBase();
+            //try
+            //{
+            //    await context.AddAsync(f);
+
+            //    await context.SaveChangesAsync();
+            //    resultado.Ok = true;
+            //    resultado.CodigoEstado = 200;
+            //    resultado.Message = "Formula agregada correctamente";
+            //    return resultado;
+            //}
+            //catch (Exception)
+            //{
+            //    resultado.Ok = false;
+            //    resultado.CodigoEstado = 400;
+            //    resultado.Message = "Error al cargar la formula";
+            //    return resultado;
+            //}
             ResultBase resultado = new ResultBase();
+
+            // Verificar si ya existe un producto con el mismo IdProducto
+            bool productoExistente = await context.Formulas.AnyAsync(formula => formula.IdProducto == f.IdProducto);
+
+            if (productoExistente)
+            {
+                resultado.Ok = false;
+                resultado.CodigoEstado = 400;
+                resultado.Message = "El producto ya tiene una fórmula existente, por favor seleccione otro!";
+                return resultado;
+            }
+
             try
             {
                 await context.AddAsync(f);
-
                 await context.SaveChangesAsync();
+
                 resultado.Ok = true;
                 resultado.CodigoEstado = 200;
                 resultado.Message = "Formula agregada correctamente";
