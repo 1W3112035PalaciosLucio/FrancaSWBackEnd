@@ -40,5 +40,16 @@ namespace FrancaSW.Controllers.OrdenProdItems
         {
             return Ok(await this.servicio.GetEstado());
         }
+
+        [HttpGet("GetEstado1")]
+        public async Task<ActionResult> GetEstado1()
+        {
+            return Ok(await this.servicio.GetEstado1());
+        }
+        [HttpGet("GetEstado2")]
+        public async Task<ActionResult> GetEstado2()
+        {
+            return Ok(await this.servicio.GetEstado2());
+        }
     }
 }

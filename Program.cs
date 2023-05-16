@@ -38,6 +38,7 @@ builder.Services.AddScoped<IServiceHistorialStockProductos, ServiceHistorialStoc
 builder.Services.AddScoped<IServiceOrdenesProduccion, ServiceOrdenesProduccion>();
 builder.Services.AddScoped<IServiceFormula, ServiceFormula>();
 builder.Services.AddScoped<IServiceAgregarOrdenProd, ServiceAgregarOrdenProd>();
+builder.Services.AddScoped<IServiceReportes, ServiceReportes>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>

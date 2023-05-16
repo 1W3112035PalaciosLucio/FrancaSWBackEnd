@@ -25,18 +25,18 @@ namespace FrancaSW.Services
         {
             //try
             //{
-            //    return await context.HistorialStockMateriaPrimas
-            //    .Where(c => c.IdMateriaPrima.Equals(id))
+            //    return await context.HistorialXStockMps
+            //    .Where(c => c.IdStockMateriaPrimaNavigation.IdMateriaPrima.Equals(id))
             //    .OrderByDescending(stock => stock.IdHistorial)
             //    .Select(stock => new DtoListadoHistorialStockMateriaPrima
             //    {
             //        IdHistorial = stock.IdHistorial,
-            //        IdMateriaPrima = stock.IdMateriaPrima,
-            //        Descripcion = stock.IdMateriaPrimaNavigation.Descripcion,
-            //        Cantidad = stock.Cantidad,
-            //        Precio = stock.Precio,
-            //        FechaUltimaActualizacion = stock.FechaUltimaActualizacion,
-            //        TipoMovimiento = stock.TipoMovimiento
+            //        IdMateriaPrima = stock.IdStockMateriaPrimaNavigation.IdMateriaPrima,
+            //        Descripcion = stock.IdStockMateriaPrimaNavigation.IdMateriaPrimaNavigation.Descripcion,
+            //        Cantidad = stock.IdStockMateriaPrimaNavigation.Cantidad,
+            //        Precio = stock.IdStockMateriaPrimaNavigation.Precio,
+            //        FechaUltimaActualizacion = stock.IdStockMateriaPrimaNavigation.FechaUltimaActualizacion,
+            //        TipoMovimiento = stock.IdHistorialNavigation.TipoMovimiento
             //    })
             //    .ToListAsync();
             //}
@@ -44,22 +44,23 @@ namespace FrancaSW.Services
             //{
             //    throw;
             //}
+
             try
             {
                 return await context.HistorialXStockMps
-                .Where(c => c.IdStockMateriaPrimaNavigation.IdMateriaPrima.Equals(id))
-                .OrderByDescending(stock => stock.IdHistorial)
-                .Select(stock => new DtoListadoHistorialStockMateriaPrima
-                {
-                    IdHistorial = stock.IdHistorial,
-                    IdMateriaPrima = stock.IdStockMateriaPrimaNavigation.IdMateriaPrima,
-                    Descripcion = stock.IdStockMateriaPrimaNavigation.IdMateriaPrimaNavigation.Descripcion,
-                    Cantidad = stock.IdStockMateriaPrimaNavigation.Cantidad,
-                    Precio = stock.IdStockMateriaPrimaNavigation.Precio,
-                    FechaUltimaActualizacion = stock.IdStockMateriaPrimaNavigation.FechaUltimaActualizacion,
-                    TipoMovimiento = stock.IdHistorialNavigation.TipoMovimiento
-                })
-                .ToListAsync();
+                    .Where(c => c.IdStockMateriaPrimaNavigation.IdMateriaPrima.Equals(id))
+                    .OrderByDescending(stock => stock.IdHistorial)
+                    .Select(stock => new DtoListadoHistorialStockMateriaPrima
+                    {
+                        IdHistorial = stock.IdHistorial,
+                        IdMateriaPrima = stock.IdStockMateriaPrimaNavigation.IdMateriaPrima,
+                        Descripcion = stock.IdStockMateriaPrimaNavigation.IdMateriaPrimaNavigation.Descripcion,
+                        Cantidad = stock.IdHistorialNavigation.Cantidad, // Utilizar la cantidad del historial en lugar de la cantidad del stock
+                        Precio = stock.IdStockMateriaPrimaNavigation.Precio,
+                        FechaUltimaActualizacion = stock.IdStockMateriaPrimaNavigation.FechaUltimaActualizacion,
+                        TipoMovimiento = stock.IdHistorialNavigation.TipoMovimiento
+                    })
+                    .ToListAsync();
             }
             catch (Exception)
             {

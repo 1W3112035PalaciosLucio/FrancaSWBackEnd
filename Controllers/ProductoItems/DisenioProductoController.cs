@@ -1,4 +1,7 @@
-﻿using FrancaSW.Services.AgregarProducto;
+﻿using FrancaSW.Commands.CommandProductos;
+using FrancaSW.Models;
+using FrancaSW.Results;
+using FrancaSW.Services.AgregarProducto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrancaSW.Controllers.ProductoItems
@@ -9,7 +12,7 @@ namespace FrancaSW.Controllers.ProductoItems
     {
         public readonly IServiceDisenioProducto servicio;
 
-        public DisenioProductoController (IServiceDisenioProducto _servicio)
+        public DisenioProductoController(IServiceDisenioProducto _servicio)
         {
             this.servicio = _servicio;
         }
@@ -20,5 +23,13 @@ namespace FrancaSW.Controllers.ProductoItems
             return Ok(await this.servicio.GetDisenio());
         }
 
+        [HttpPost("PostDisenio")]
+        public async Task<ActionResult<ResultBase>> PostDisenio([FromBody] CommandDisenio comando)
+        {
+            DiseniosProducto disenio = new DiseniosProducto();
+            disenio.Descripcion = comando.Descripcion;
+
+            return Ok(await this.servicio.PostDisenio(disenio));
+        }
     }
 }

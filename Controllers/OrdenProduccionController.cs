@@ -28,13 +28,64 @@ namespace FrancaSW.Controllers
             return Ok(await this.serviceOP.GetListadoOrdenProduccion());
 
         }
+        [HttpGet("GetOrdenProduccionById/{id}")]
+        public async Task<ActionResult<ResultBase>> GetOrdenProduccionById(int id)
+        {
+            return Ok(await this.serviceOP.GetOrdenProduccionById(id));
+        }
+
 
         [HttpPost("PostOrdenProd")]
-        public async Task<ActionResult<ResultBase>> PostOrdenProd([FromBody] DtoOrdenProd orden)
+        public async Task<ActionResult<ResultBase>> PostOrdenProduccion(DtoOrdenProd ordenDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Obtener la fórmula del producto
+            Formula formula = await serviceOP.GetFormulaByProductoId(ordenDto.IdProducto);
+
+            // Verificar si hay suficiente stock de materia prima
+            decimal cantidadMateriaPrimaNecesaria = formula.CantidadMateriaPrima * ordenDto.Cantidad.GetValueOrDefault();
+            StockMateriasPrima materiaPrima = await serviceOP.GetStockMateriaPrimaById(formula.IdMateriaPrima);
+
+            if (materiaPrima == null || materiaPrima.Cantidad < cantidadMateriaPrimaNecesaria)
+            {
+                return BadRequest("No hay suficiente stock de materia prima");
+            }
+
+            // Procesar la orden de producción
+            ResultBase resultado = await serviceOP.PostOrdenProd(ordenDto);
+
+            if (resultado.Ok)
+            {
+                // Actualizar el stock de materia prima
+                materiaPrima.Cantidad -= cantidadMateriaPrimaNecesaria;
+                await serviceOP.UpdateStockMateriaPrima(materiaPrima);
+
+                return Ok(resultado);
+            }
+
+            return BadRequest(resultado);
+        }
+
+        [HttpPut("PutEstado")]
+        public async Task<ActionResult<ResultBase>> PutEstado([FromBody] DtoEstadoOrden comando)
+        {
+            DtoEstadoOrden o = new DtoEstadoOrden();
+            o.NumeroOrden = comando.NumeroOrden;
+            o.IdEstadoOrdenProduccion = comando.IdEstadoOrdenProduccion;
+
+            return Ok(await this.serviceOP.PutEstado(o));
+        }
+
+        [HttpPut("PutOrdenProd")]
+        public async Task<ActionResult<ResultBase>> PutOrdenProd([FromBody] DtoOrdenProd orden)
         {
             try
             {
-                var result = await serviceOP.PostOrdenProd(orden);
+                var result = await serviceOP.PutOrdenProd(orden);
 
                 if (result.Ok)
                 {
@@ -51,17 +102,5 @@ namespace FrancaSW.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpPut("PutEstado")]
-        public async Task<ActionResult<ResultBase>> PutEstado([FromBody] DtoEstadoOrden comando)
-        {
-            DtoEstadoOrden o = new DtoEstadoOrden();
-            o.NumeroOrden = comando.NumeroOrden;
-            o.IdEstadoOrdenProduccion = comando.IdEstadoOrdenProduccion;
-
-            return Ok(await this.serviceOP.PutEstado(o));
-        }
-
-
     }
 }

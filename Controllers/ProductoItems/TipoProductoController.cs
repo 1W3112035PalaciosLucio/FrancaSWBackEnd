@@ -1,4 +1,7 @@
-﻿using FrancaSW.Services.AgregarProducto;
+﻿using FrancaSW.Commands.CommandProductos;
+using FrancaSW.Models;
+using FrancaSW.Results;
+using FrancaSW.Services.AgregarProducto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrancaSW.Controllers.ProductoItems
@@ -18,6 +21,15 @@ namespace FrancaSW.Controllers.ProductoItems
         public async Task<ActionResult> GetTipoProducto()
         {
             return Ok(await this.servicio.GetTipoProducto());
+        }
+
+        [HttpPost("PostTipoProd")]
+        public async Task<ActionResult<ResultBase>> PostTipoProd([FromBody] CommandTipoProd comando)
+        {
+            TiposProducto tipo = new TiposProducto();
+            tipo.Descripcion = comando.Descripcion;
+
+            return Ok(await this.servicio.PostTipoProd(tipo));
         }
     }
 }

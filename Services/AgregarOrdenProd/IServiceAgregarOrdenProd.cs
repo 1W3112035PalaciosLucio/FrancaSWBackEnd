@@ -9,5 +9,7 @@ namespace FrancaSW.Services.AgregarOrdenProd
         Task<List<Producto>> GetProducto();
         Task<List<Usuario>> GetUsuario();
         Task<List<EstadosOrdenesProduccione>> GetEstado();
+        Task<List<EstadosOrdenesProduccione>> GetEstado1();
+        Task<List<EstadosOrdenesProduccione>> GetEstado2();
     }
 }

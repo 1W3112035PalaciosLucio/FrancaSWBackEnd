@@ -31,6 +31,22 @@ namespace FrancaSW.Services.AgregarOrdenProd
         {
             return await this.context.EstadosOrdenesProducciones.AsNoTracking().ToListAsync();
         }
+        public async Task<List<EstadosOrdenesProduccione>> GetEstado1()
+        {
+            var resultado = await this.context.EstadosOrdenesProducciones
+                            .Where(estado => estado.IdEstadoOrdenProduccion == 1)
+                            .ToListAsync();
+
+            return resultado;
+        }
+        public async Task<List<EstadosOrdenesProduccione>> GetEstado2()
+        {
+            var resultado = await this.context.EstadosOrdenesProducciones
+                                        .Where(estado => estado.IdEstadoOrdenProduccion != 1)
+                                        .ToListAsync();
+
+            return resultado;
+        }
 
     }
 }
