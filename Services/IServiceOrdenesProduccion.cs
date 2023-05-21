@@ -15,5 +15,7 @@ namespace FrancaSW.Services
         Task<Formula> GetFormulaByProductoId(int productoId);
         Task<StockMateriasPrima> GetStockMateriaPrimaById(int materiaPrimaId);
         Task<ResultBase> UpdateStockMateriaPrima(StockMateriasPrima materiaPrima);
+
+
     }
 }

@@ -109,6 +109,7 @@ public partial class FrancaSwContext : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Telefono).HasColumnType("decimal(18, 0)");
 
             entity.HasOne(d => d.IdLocalidadNavigation).WithMany(p => p.Clientes)
                 .HasForeignKey(d => d.IdLocalidad)
@@ -468,6 +469,7 @@ public partial class FrancaSwContext : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Telefono).HasColumnType("decimal(18, 0)");
 
             entity.HasOne(d => d.IdLocalidadNavigation).WithMany(p => p.Proveedores)
                 .HasForeignKey(d => d.IdLocalidad)
@@ -607,6 +609,7 @@ public partial class FrancaSwContext : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Telefono).HasColumnType("decimal(18, 0)");
         });
 
         OnModelCreatingPartial(modelBuilder);

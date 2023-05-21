@@ -42,5 +42,38 @@ namespace FrancaSW.Services
 
             return await query;
         }
+
+        public async Task<List<DtoListaReporte>> GetListadoReporteStockProd1()
+        {
+            var query = (from p in context.Productos
+                         join sp in context.StockProductos on p.IdProducto equals sp.IdProducto
+                         join mp in context.MedidasProductos on p.IdMedidaProducto equals mp.IdMedidaProducto
+                         join pb in context.PreciosBochas on p.IdPrecioBocha equals pb.IdPreciosBocha
+                         join tp in context.TiposProductos on p.IdTipoProducto equals tp.IdTipoProducto
+                         join dp in context.DiseniosProductos on p.IdDisenioProducto equals dp.IdDisenio
+                         join hsp in context.HistorialStockProductos on p.IdProducto equals hsp.IdProducto
+                         select new DtoListaReporte
+                         {
+                             Nombre = p.Nombre,
+                             Cantidad = sp.Cantidad
+                         }).Distinct().ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReporteMP>> GetListadoReporteStockMP()
+        {
+            var query = (from mp in context.MateriasPrimas
+                         join smp in context.StockMateriasPrimas on mp.IdMateriaPrima equals smp.IdMateriaPrima
+                         join hsmp in context.HistorialStockMateriaPrimas on mp.IdMateriaPrima equals hsmp.IdMateriaPrima
+                         select new DtoListaReporteMP
+                         {
+                             Descripcion = mp.Descripcion,
+                             Cantidad = smp.Cantidad
+                           
+                         }).Distinct().ToListAsync();
+
+            return await query;
+        }
     }
 }

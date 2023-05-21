@@ -74,13 +74,7 @@ namespace FrancaSW.Services
         }
 
 
-        public class MappingProfile : Profile
-        {
-            public MappingProfile()
-            {
-                CreateMap<DtoOrdenProd, OrdenesProduccione>();
-            }
-        }
+
         public async Task<ResultBase> UpdateStockMateriaPrima(StockMateriasPrima materiaPrima)
         {
             try
@@ -113,7 +107,6 @@ namespace FrancaSW.Services
 
             return formula;
         }
-
         public async Task<StockMateriasPrima> GetStockMateriaPrimaById(int materiaPrimaId)
         {
             StockMateriasPrima materiaPrima = await context.StockMateriasPrimas
@@ -121,90 +114,118 @@ namespace FrancaSW.Services
 
             return materiaPrima;
         }
+        public class MappingProfile : Profile
+        {
+            public MappingProfile()
+            {
+                CreateMap<DtoOrdenProd, OrdenesProduccione>();
+            }
+        }
+        //public async Task<ResultBase> PostOrdenProd(DtoOrdenProd ordenDto)
+        //{
+        //    ResultBase resultado = new ResultBase();
 
+        //    try
+        //    {
+        //        bool tieneSuficienteStock = await VerificarStockMateriasPrimas(ordenDto);
+
+        //        if (tieneSuficienteStock)
+        //        {
+        //            var ordenEntity = mapper.Map<OrdenesProduccione>(ordenDto);
+        //            await context.AddAsync(ordenEntity);
+        //            await context.SaveChangesAsync();
+
+        //            List<Formula> formulas = await context.Formulas
+        //                .Where(f => f.IdProducto == ordenDto.IdProducto)
+        //                .ToListAsync();
+
+        //            foreach (Formula formula in formulas)
+        //            {
+        //                StockMateriasPrima stockMateriaPrima = await context.StockMateriasPrimas
+        //                    .FirstOrDefaultAsync(sp => sp.IdMateriaPrima == formula.IdMateriaPrima);
+
+        //                decimal cantidadUtilizada = formula.CantidadMateriaPrima * ordenDto.Cantidad.GetValueOrDefault();
+        //                stockMateriaPrima.Cantidad -= cantidadUtilizada;
+        //            }
+
+        //            await context.SaveChangesAsync();
+
+        //            resultado.Ok = true;
+        //            resultado.CodigoEstado = 200;
+        //            resultado.Message = "La orden de producción fue cargada con éxito.";
+        //            return resultado;
+        //        }
+        //        else
+        //        {
+
+        //            resultado.Ok = false;
+        //            resultado.CodigoEstado = 400;
+        //            resultado.Message = "No hay suficiente stock de materias primas para fabricar el producto.";
+        //            return resultado;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        resultado.Ok = false;
+        //        resultado.CodigoEstado = 400;
+        //        resultado.Message = "Error al registrar la orden de producción.";
+        //        return resultado;
+        //    }
+        //}
         public async Task<ResultBase> PostOrdenProd(DtoOrdenProd ordenDto)
         {
             ResultBase resultado = new ResultBase();
 
             try
             {
-                // Verificar el stock de materias primas
                 bool tieneSuficienteStock = await VerificarStockMateriasPrimas(ordenDto);
 
                 if (tieneSuficienteStock)
                 {
-                    // Realizar el mapeo del DTO a la entidad
                     var ordenEntity = mapper.Map<OrdenesProduccione>(ordenDto);
-
-                    // Agregar la entidad al contexto de base de datos
                     await context.AddAsync(ordenEntity);
                     await context.SaveChangesAsync();
 
-                    // Obtener la fórmula del producto
+                    // Generar el número de orden manualmente
+                    int ultimoNumeroOrden = await context.OrdenesProducciones.MaxAsync(o => o.NumeroOrden);
+                    int numeroOrden = ultimoNumeroOrden + 1;
+
+                    ordenEntity.NumeroOrden = numeroOrden;
+                    await context.SaveChangesAsync();
+
                     List<Formula> formulas = await context.Formulas
                         .Where(f => f.IdProducto == ordenDto.IdProducto)
                         .ToListAsync();
-
-                    // Restar la cantidad requerida de materias primas del stock
-                    decimal cantidadMateriaPrimaUtilizada = 0; // Variable para almacenar la cantidad de materia prima utilizada
 
                     foreach (Formula formula in formulas)
                     {
                         StockMateriasPrima stockMateriaPrima = await context.StockMateriasPrimas
                             .FirstOrDefaultAsync(sp => sp.IdMateriaPrima == formula.IdMateriaPrima);
 
-                        decimal cantidadUtilizada = formula.CantidadMateriaPrima;
+                        decimal cantidadUtilizada = formula.CantidadMateriaPrima * ordenDto.Cantidad.GetValueOrDefault();
                         stockMateriaPrima.Cantidad -= cantidadUtilizada;
-
-                        cantidadMateriaPrimaUtilizada += cantidadUtilizada; // Sumar la cantidad utilizada
                     }
 
                     await context.SaveChangesAsync();
 
-                    // Crear una nueva instancia de Historial_Stock_Materia_Prima para cada materia prima utilizada
-                    foreach (Formula formula in formulas)
-                    {
-                        StockMateriasPrima materiaPrima = await context.StockMateriasPrimas
-                            .FirstOrDefaultAsync(sp => sp.IdMateriaPrima == formula.IdMateriaPrima);
-
-                        var historialStockMp = new HistorialStockMateriaPrima
-                        {
-                            Cantidad = cantidadMateriaPrimaUtilizada, // Utilizar la cantidad total utilizada
-                            Precio = materiaPrima.Precio,
-                            FechaUltimaActualizacion = DateTime.Now,
-                            IdMateriaPrima = formula.IdMateriaPrima,
-                            TipoMovimiento = "PRODUCCION"
-                        };
-
-                        // Restar la cantidad utilizada de la variable cantidadMateriaPrimaUtilizada
-                        cantidadMateriaPrimaUtilizada -= formula.CantidadMateriaPrima;
-
-                        // Guardar la instancia de Historial_Stock_Materia_Prima en la base de datos
-                        context.HistorialStockMateriaPrimas.Add(historialStockMp);
-                        await context.SaveChangesAsync();
-
-                        // Crear una nueva instancia de Historial_X_StockMP para relacionar los registros
-                        var historialXStockMp = new HistorialXStockMp
-                        {
-                            IdHistorial = historialStockMp.IdHistorial,
-                            IdStockMateriaPrima = materiaPrima.IdStockMateriaPrima
-                        };
-
-                        // Guardar la instancia de Historial_X_StockMP en la base de datos
-                        context.HistorialXStockMps.Add(historialXStockMp);
-                        await context.SaveChangesAsync();
-                    }
-
                     resultado.Ok = true;
                     resultado.CodigoEstado = 200;
                     resultado.Message = "La orden de producción fue cargada con éxito.";
+
+                    // Asignar el número de orden generado al objeto ordenDto
+                    ordenDto.NumeroOrden = numeroOrden;
+
+                   
                     return resultado;
                 }
-
-                resultado.Ok = false;
-                resultado.CodigoEstado = 400;
-                resultado.Message = "No hay suficiente stock de materias primas para fabricar el producto.";
-                return resultado;
+                else
+                {
+                    resultado.Ok = false;
+                    resultado.CodigoEstado = 400;
+                    resultado.Message = "No hay suficiente stock de materias primas para fabricar el producto.";
+                    return resultado;
+                }
             }
             catch (Exception ex)
             {
@@ -218,25 +239,25 @@ namespace FrancaSW.Services
 
         private async Task<bool> VerificarStockMateriasPrimas(DtoOrdenProd orden)
         {
-            // Obtener la fórmula del producto
             List<Formula> formulas = await context.Formulas
                 .Where(f => f.IdProducto == orden.IdProducto)
                 .ToListAsync();
 
-            // Verificar el stock de cada materia prima en la fórmula
             foreach (Formula formula in formulas)
             {
                 StockMateriasPrima stockMateriaPrima = await context.StockMateriasPrimas
                     .FirstOrDefaultAsync(sp => sp.IdMateriaPrima == formula.IdMateriaPrima);
 
-                if (stockMateriaPrima == null || stockMateriaPrima.Cantidad < formula.CantidadMateriaPrima)
+                if (stockMateriaPrima == null || stockMateriaPrima.Cantidad < (formula.CantidadMateriaPrima * orden.Cantidad.GetValueOrDefault()))
                 {
-                    return false; // No hay suficiente stock
+                    return false;
                 }
             }
 
-            return true; // Tiene suficiente stock de todas las materias primas
+            return true;
         }
+
+
 
         public async Task<ResultBase> PutEstado(DtoEstadoOrden estado)
         {
@@ -313,7 +334,7 @@ namespace FrancaSW.Services
             await context.SaveChangesAsync();
         }
 
-        private async Task AgregarProductos(OrdenesProduccione orden) 
+        private async Task AgregarProductos(OrdenesProduccione orden)
         {
             var stockProducto = await context.StockProductos
                 .FirstOrDefaultAsync(sp => sp.IdProducto == orden.IdProducto);

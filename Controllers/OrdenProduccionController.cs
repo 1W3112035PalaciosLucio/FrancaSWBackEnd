@@ -43,27 +43,10 @@ namespace FrancaSW.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Obtener la fórmula del producto
-            Formula formula = await serviceOP.GetFormulaByProductoId(ordenDto.IdProducto);
-
-            // Verificar si hay suficiente stock de materia prima
-            decimal cantidadMateriaPrimaNecesaria = formula.CantidadMateriaPrima * ordenDto.Cantidad.GetValueOrDefault();
-            StockMateriasPrima materiaPrima = await serviceOP.GetStockMateriaPrimaById(formula.IdMateriaPrima);
-
-            if (materiaPrima == null || materiaPrima.Cantidad < cantidadMateriaPrimaNecesaria)
-            {
-                return BadRequest("No hay suficiente stock de materia prima");
-            }
-
-            // Procesar la orden de producción
             ResultBase resultado = await serviceOP.PostOrdenProd(ordenDto);
 
             if (resultado.Ok)
             {
-                // Actualizar el stock de materia prima
-                materiaPrima.Cantidad -= cantidadMateriaPrimaNecesaria;
-                await serviceOP.UpdateStockMateriaPrima(materiaPrima);
-
                 return Ok(resultado);
             }
 

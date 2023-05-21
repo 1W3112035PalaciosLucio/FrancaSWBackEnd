@@ -11,7 +11,7 @@ public partial class Proveedore
 
     public string Apellido { get; set; } = null!;
 
-    public int Telefono { get; set; }
+    public decimal Telefono { get; set; }
 
     public int IdLocalidad { get; set; }
 

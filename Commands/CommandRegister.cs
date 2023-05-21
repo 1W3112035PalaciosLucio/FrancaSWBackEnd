@@ -11,7 +11,7 @@ namespace FrancaSW.Commands
         public string Apellido { get; set; }
         /***/
         [Required(ErrorMessage = "El telefono es requerido.")]
-        public int Telefono { get; set; }
+        public decimal Telefono { get; set; }
         /***/
         [Required(ErrorMessage = "El email es requerido.")]
         public string Email { get; set; }

@@ -15,7 +15,7 @@ public partial class Usuario
 
     public string Email { get; set; } = null!;
 
-    public int Telefono { get; set; }
+    public decimal Telefono { get; set; }
 
     public byte[] HashPassword { get; set; } = null!;
 

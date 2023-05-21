@@ -11,7 +11,7 @@ public partial class Cliente
 
     public string Apellido { get; set; } = null!;
 
-    public int Telefono { get; set; }
+    public decimal Telefono { get; set; }
 
     public string Direccion { get; set; } = null!;
 

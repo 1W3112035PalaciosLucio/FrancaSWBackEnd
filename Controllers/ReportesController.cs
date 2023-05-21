@@ -24,5 +24,17 @@ namespace FrancaSW.Controllers
             return Ok(await this.serviceReporte.GetListadoReporteStockProd());
         }
 
+
+        [HttpGet("GetListadoReporteStockProd1")]
+        public async Task<ActionResult> GetListadoReporteStockProd1()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteStockProd1());
+        }
+
+        [HttpGet("GetListadoReporteStockMP")]
+        public async Task<ActionResult> GetListadoReporteStockMP()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteStockMP());
+        }
     }
 }

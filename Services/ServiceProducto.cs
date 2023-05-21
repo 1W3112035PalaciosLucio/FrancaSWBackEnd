@@ -29,6 +29,7 @@ namespace FrancaSW.Services
         public async Task<List<DtoListadoProductos>> GetListadoProductos()
         {
             return await context.Productos.AsNoTracking().
+                OrderBy(x=>x.Codigo).
                 Select(x => new DtoListadoProductos
                 {
                     idProducto = x.IdProducto,

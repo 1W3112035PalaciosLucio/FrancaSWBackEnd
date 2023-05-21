@@ -10,7 +10,7 @@ using Microsoft.OpenApi.Writers;
 
 namespace FrancaSW.Services
 {
-    public class ServiceMateriaPrima: IServiceMateriaPrima
+    public class ServiceMateriaPrima : IServiceMateriaPrima
     {
         private readonly FrancaSwContext context;
         private readonly ISecurityService securityService;
@@ -18,13 +18,15 @@ namespace FrancaSW.Services
         public ServiceMateriaPrima(FrancaSwContext _context, ISecurityService _securityService)
         {
             this.context = _context;
-            this.securityService= _securityService;
+            this.securityService = _securityService;
         }
 
         //Listado de materias primas
         public async Task<List<MateriasPrima>> GetMateriaPrima()
         {
-            return await context.MateriasPrimas.AsNoTracking().ToListAsync();
+            return await context.MateriasPrimas.AsNoTracking()
+        .OrderBy(mp => mp.Codigo) // Ordenar por el campo "Nombre" en orden ascendente
+        .ToListAsync();
         }
         //Posteo de materias primas
         public async Task<ResultBase> PostMateriaPrima(MateriasPrima mp)
@@ -54,7 +56,7 @@ namespace FrancaSW.Services
         {
             ResultBase resultado = new ResultBase();
             var materiaPrima = await context.MateriasPrimas.Where(c => c.Codigo.Equals(dtoMp.Codigo)).FirstOrDefaultAsync();
-            if (materiaPrima!=null)
+            if (materiaPrima != null)
             {
                 materiaPrima.Descripcion = dtoMp.Descripcion;
                 context.Update(materiaPrima);
@@ -76,7 +78,7 @@ namespace FrancaSW.Services
         {
             try
             {
-                MateriasPrima mp = await context.MateriasPrimas.Where(c => c.Codigo.Equals(id)).FirstOrDefaultAsync();
+                MateriasPrima mp = await context.MateriasPrimas.Where(c => c.Codigo.Equals(id)).OrderBy(m => m.Codigo).FirstOrDefaultAsync();
                 DTOMateriaPrima dto = new DTOMateriaPrima();
                 dto.Codigo = mp.Codigo;
                 dto.Descripcion = mp.Descripcion;
@@ -88,6 +90,6 @@ namespace FrancaSW.Services
                 throw;
             }
         }
-       
+
     }
 }
