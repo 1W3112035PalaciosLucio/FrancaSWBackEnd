@@ -26,12 +26,13 @@ namespace FrancaSW.Services
                 {
                     IdStockProducto = x.IdStockProducto,
                     IdProducto = x.IdProducto,
+                    Codigo = x.IdProductoNavigation.Codigo,
                     Nombre = x.IdProductoNavigation.Nombre,
                     Cantidad = x.Cantidad,
                     Precio = x.IdProductoNavigation.IdPrecioBochaNavigation.Precio,
                     FechaUltimaActualizacion = x.FechaUltimaActualizacion
 
-                }).ToListAsync();
+                }).OrderBy(x=>x.Codigo).ToListAsync();
         }
 
         public async Task<DtoStockProducto> GetStockProductoById(int id)

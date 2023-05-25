@@ -36,5 +36,36 @@ namespace FrancaSW.Controllers
         {
             return Ok(await this.serviceReporte.GetListadoReporteStockMP());
         }
+
+        [HttpGet("GetListadoReportePrecioMP")]
+        public async Task<ActionResult> GetListadoReportePrecioMP()
+        {
+            return Ok(await this.serviceReporte.GetListadoReportePrecioMP());
+        }
+
+        [HttpGet("GetListadoReporteOrdenPendiente")]
+        public async Task<ActionResult> GetListadoReporteOrdenPendiente()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteOrdenPendiente());
+        }
+
+        [HttpGet("GetListadoReporteOrdenPendienteMp")]
+        public async Task<ActionResult> GetListadoReporteOrdenPendienteMp()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteOrdenPendienteMp());
+        }
+
+
+        [HttpGet("GetListadoReporteMPDisponible")]
+        public async Task<ActionResult> GetListadoReporteMPDisponible()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteMPDisponible());
+        }
+
+        [HttpGet("GetListadoReporteMPStockMinimo")]
+        public async Task<ActionResult> GetListadoReporteMPStockMinimo()
+        {
+            return Ok(await this.serviceReporte.GetListadoReporteMPStockMinimo());
+        }
     }
 }

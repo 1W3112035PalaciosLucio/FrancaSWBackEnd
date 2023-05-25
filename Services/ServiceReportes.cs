@@ -1,6 +1,7 @@
 ﻿using FrancaSW.DataContext;
 using FrancaSW.DTO;
 using FrancaSW.DTO.Reportes;
+using FrancaSW.Models;
 using FrancaSW.Services.Security;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,8 +71,91 @@ namespace FrancaSW.Services
                          {
                              Descripcion = mp.Descripcion,
                              Cantidad = smp.Cantidad
-                           
+
                          }).Distinct().ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReportePrecioMP>> GetListadoReportePrecioMP()
+        {
+            var query = (from hsmp in context.HistorialStockMateriaPrimas
+                         join smp in context.StockMateriasPrimas on hsmp.IdMateriaPrima equals smp.IdMateriaPrima
+                         join mp in context.MateriasPrimas on hsmp.IdMateriaPrima equals mp.IdMateriaPrima
+                         select new DtoListaReportePrecioMP
+                         {
+                             Descripcion = mp.Descripcion,
+                             Precio = hsmp.Precio,
+                             FechaUltimaActualizacion = hsmp.FechaUltimaActualizacion.ToString("dd-MM-yyyy")
+                         }).ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReporteOrdenPendiente>> GetListadoReporteOrdenPendiente()
+        {
+            var query = (from op in context.OrdenesProducciones
+                         join eop in context.EstadosOrdenesProducciones on op.IdEstadoOrdenProduccion equals eop.IdEstadoOrdenProduccion
+                         join p in context.Productos on op.IdProducto equals p.IdProducto
+                         where op.IdEstadoOrdenProduccion == 1
+                         group op by p.Nombre into g
+                         select new DtoListaReporteOrdenPendiente
+                         {
+                             Nombre = g.Key,
+                             Cantidad = g.Sum(op => op.Cantidad)
+                         }).ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReporteOrdenPendienteMp>> GetListadoReporteOrdenPendienteMp()
+        {
+            var query = (from op in context.OrdenesProducciones
+                         join eop in context.EstadosOrdenesProducciones on op.IdEstadoOrdenProduccion equals eop.IdEstadoOrdenProduccion
+                         join p in context.Productos on op.IdProducto equals p.IdProducto
+                         join f in context.Formulas on p.IdProducto equals f.IdProducto
+                         join mp in context.MateriasPrimas on f.IdMateriaPrima equals mp.IdMateriaPrima
+                         where op.IdEstadoOrdenProduccion == 1
+                         group f by mp.Descripcion into g
+                         select new DtoListaReporteOrdenPendienteMp
+                         {
+                             Descripcion = g.Key,
+                             CantidadMateriaPrima = g.Sum(f => f.CantidadMateriaPrima)
+                         }).ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReporteMPDisponible>> GetListadoReporteMPDisponible()
+        {
+            var query = (from op in context.OrdenesProducciones
+                         join eop in context.EstadosOrdenesProducciones on op.IdEstadoOrdenProduccion equals eop.IdEstadoOrdenProduccion
+                         join p in context.Productos on op.IdProducto equals p.IdProducto
+                         join f in context.Formulas on p.IdProducto equals f.IdProducto
+                         join mp in context.MateriasPrimas on f.IdMateriaPrima equals mp.IdMateriaPrima
+                         join smp in context.StockMateriasPrimas on mp.IdMateriaPrima equals smp.IdMateriaPrima
+                         where op.IdEstadoOrdenProduccion == 1
+                         group new { mp, smp } by new { mp.Descripcion, smp.Cantidad } into g
+                         select new DtoListaReporteMPDisponible
+                         {
+                             Descripcion = g.Key.Descripcion,
+                             Cantidad = g.Key.Cantidad
+                         }).ToListAsync();
+
+            return await query;
+        }
+
+        public async Task<List<DtoListaReporteMPStockMinimo>> GetListadoReporteMPStockMinimo()
+        {
+            var query = (from smp in context.StockMateriasPrimas
+                         join mp in context.MateriasPrimas on smp.IdMateriaPrima equals mp.IdMateriaPrima
+                         where smp.Cantidad < smp.StockMinimo
+                         orderby smp.Cantidad ascending
+                         select new DtoListaReporteMPStockMinimo
+                         {
+                             Descripcion = mp.Descripcion,
+                             Cantidad = smp.Cantidad
+                         }).ToListAsync();
 
             return await query;
         }
