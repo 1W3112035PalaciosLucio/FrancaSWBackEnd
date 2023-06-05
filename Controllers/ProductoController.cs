@@ -43,6 +43,13 @@ namespace FrancaSW.Controllers
         [HttpPost("PostProducto")]
         public async Task<ActionResult<ResultBase>> PostProducto([FromBody] CommandProducto comando)
         {
+            bool productoExistente = await this.serviceProducto.VerificarExistenciaProducto(comando.Codigo);
+
+            if (productoExistente)
+            {
+                return BadRequest("El producto con el código especificado ya existe en la base de datos.");
+            }
+
             Producto prod = new Producto();
             prod.Nombre = comando.Nombre;
             prod.Codigo = comando.Codigo;

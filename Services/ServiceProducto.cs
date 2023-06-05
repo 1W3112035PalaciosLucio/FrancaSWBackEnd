@@ -143,7 +143,6 @@ namespace FrancaSW.Services
             }
         }
 
-
         public async Task<DTOProducto> GetProdByCodigo(int id)
         {
             try
@@ -214,6 +213,14 @@ namespace FrancaSW.Services
                 return resultado;
             }
             return resultado;
+        }
+
+        public async Task<bool> VerificarExistenciaProducto(int codigo)
+        {
+            // Realizar una consulta a la base de datos para verificar la existencia del producto
+            var productoExistente = await context.Productos.AnyAsync(p => p.Codigo == codigo);
+
+            return productoExistente;
         }
     }
 }
